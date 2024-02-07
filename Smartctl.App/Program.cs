@@ -1,7 +1,19 @@
-﻿using Smartctl.Core.Contracts;
-using Smartctl.Core.SmartMonTools;
-using Smartctl.Core.Terminal;
+﻿using Smartctl.Data;
+using Smartctl.Data.Models;
 
-var res = new SmartMonToolsWrapper(new CommandExecutor()).GetDiskStats(new DiskStatsArgs("/dev/nvme0"));
+// var res = new SmartMonToolsWrapper(new CommandExecutor()).GetDiskStats(new DiskStatsArgs("/dev/nvme0"));
+//
+// Console.WriteLine(res);
 
-Console.WriteLine(res);
+using var db = new SmartctlContext();
+
+db.Database.EnsureCreated();
+
+db.DiskDataPoints.Add(new DiskDataPoint
+{
+    Device = "dev",
+    Date = DateTime.Now,
+    RawJson = ""
+});
+
+db.SaveChanges();
