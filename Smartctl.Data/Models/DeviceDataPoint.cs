@@ -2,12 +2,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Smartctl.Data.Models;
 
-[PrimaryKey(nameof(Date), nameof(Device))]
+[PrimaryKey(nameof(Device), nameof(Date))]
 public class DeviceDataPoint
 {
-    public DateOnly Date { get; set; }
-
     public string Device { get; set; }
+
+    public DateOnly Date { get; set; }
 
     public double ReadTb { get; set; }
 

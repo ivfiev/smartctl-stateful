@@ -9,7 +9,14 @@ public class SmartctlContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
-        var home = Environment.GetEnvironmentVariable("HOME");
-        options.UseSqlite($"Data Source={home}/.smartctl-stateful/data.db");
+        if (Environment.GetEnvironmentVariable("SMARTCTL_INMEMORY") == "1")
+        {
+            options.UseSqlite("DataSource=:memory:?cache=shared");
+        }
+        else
+        {
+            var home = Environment.GetEnvironmentVariable("HOME");
+            options.UseSqlite($"Data Source={home}/.smartctl-stateful/data.db");
+        }
     }
 }

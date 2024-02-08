@@ -37,7 +37,12 @@ public class SmartctlService(SmartctlContext db, IDeviceStatsProvider provider)
 
     private PeriodDeviceStats CalcStats(string deviceId)
     {
-        return new PeriodDeviceStats(0, 0, null, 0);
+        var allStats = db.DeviceDataPoints
+            .Where(data => data.Device == deviceId)
+            .OrderByDescending(data => data.Date)
+            .ToArray();
+        var today = allStats.First(data => data.Date == _today);
+        return new PeriodDeviceStats(today.ReadTb, today.WrittenTb, null, today.Errors);
     }
 
     private DeviceDataPoint GetModel(DateOnly date, string deviceId, DeviceStats stats)
@@ -53,4 +58,4 @@ public class SmartctlService(SmartctlContext db, IDeviceStatsProvider provider)
     }
 }
 
-public record PeriodDeviceStats(double TotalReadTb, double TotalWrittenTb, IDictionary<int, double> WrittenTbPerPeriod, int Errors);
+public record PeriodDeviceStats(double ReadTb, double WrittenTb, IDictionary<int, double> WrittenTbPerPeriod, int Errors);

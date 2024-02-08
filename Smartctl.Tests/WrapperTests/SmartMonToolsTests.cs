@@ -4,9 +4,9 @@ using Smartctl.Core.SmartMonTools;
 
 namespace Smartctl.Tests.WrapperTests;
 
-public class SmartMonTools
+public class SmartMonToolsTests
 {
-    public SmartMonTools()
+    public SmartMonToolsTests()
     {
         Cmd = new Mock<ICommandExecutor>();
         Sut = new SmartMonToolsWrapper(Cmd.Object);
