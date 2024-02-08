@@ -41,8 +41,27 @@ public class SmartctlService(SmartctlContext db, IDeviceStatsProvider provider)
             .Where(data => data.Device == deviceId)
             .OrderByDescending(data => data.Date)
             .ToArray();
+
         var today = allStats.First(data => data.Date == _today);
-        return new PeriodDeviceStats(today.ReadTb, today.WrittenTb, null, today.Errors);
+        var yesterday = allStats.SkipWhile(data => data.Date >= _today).FirstOrDefault();
+        var week = allStats.SkipWhile(data => data.Date > _today.AddDays(-7)).FirstOrDefault();
+        var month = allStats.SkipWhile(data => data.Date > _today.AddDays(-30)).FirstOrDefault();
+
+        var periods = new Dictionary<int, double>();
+        AddPeriodPoint(periods, today, yesterday);
+        AddPeriodPoint(periods, today, week);
+        AddPeriodPoint(periods, today, month);
+
+        return new PeriodDeviceStats(today.ReadTb, today.WrittenTb, periods, today.Errors);
+    }
+
+    private void AddPeriodPoint(IDictionary<int, double> periods, DeviceDataPoint today, DeviceDataPoint? then)
+    {
+        if (then is not null)
+        {
+            var days = today.Date.DayNumber - then.Date.DayNumber;
+            periods[days] = (today.WrittenTb - then.WrittenTb) / days;
+        }
     }
 
     private DeviceDataPoint GetModel(DateOnly date, string deviceId, DeviceStats stats)
