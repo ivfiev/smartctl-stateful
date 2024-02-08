@@ -18,44 +18,23 @@ public class SmartMonTools
     [Fact]
     public void Wrapper_ParsesJsonDataCorrectly()
     {
-        Cmd.Setup(cmd => cmd.ExecAsSudo(It.IsAny<string>())).Returns(GetJson(123, 234, 3, 5));
+        Cmd.Setup(cmd => cmd.ExecAsSudo(It.IsAny<string>())).Returns(GetJson(2000000, 1000000, 3, 5));
 
-        var result = Sut.GetDeviceStats(Args());
+        var result = Sut.GetDeviceStats("/device");
 
-        Assert.Equal(123ul, result.DataUnitsRead);
-        Assert.Equal(234ul, result.DataUnitsWritten);
-        Assert.Equal(8u, result.TotalErrors);
+        Assert.Equal(1.02, result.ReadTb);
+        Assert.Equal(0.51, result.WrittenTb);
+        Assert.Equal(8, result.Errors);
     }
 
-    [Theory]
-    [InlineData("/device1", 1001, 1002, 1001)]
-    [InlineData("/device2", 1002, 8888, 8888)]
-    public void Wrapper_GivenDeviceString_ReturnsCorrectDataUnitsRead(string device, int data1, int data2, int expected)
+    [Fact]
+    public void Wrapper_RequestsCorrectDeviceId()
     {
-        Cmd.Setup(cmd => cmd.ExecAsSudo(It.Is<string>(str => str.Contains("/device1")))).Returns(GetJson(data1));
-        Cmd.Setup(cmd => cmd.ExecAsSudo(It.Is<string>(str => str.Contains("/device2")))).Returns(GetJson(data2));
+        Cmd.Setup(cmd => cmd.ExecAsSudo(It.IsAny<string>())).Returns(GetJson());
 
-        var result = Sut.GetDeviceStats(Args(device));
+        Sut.GetDeviceStats("/dev/nvme0");
 
-        Assert.Equal((ulong)expected, result.DataUnitsRead);
-    }
-
-    [Theory]
-    [InlineData("/device1", 1001, 1002, 1001)]
-    [InlineData("/device2", 1002, 8888, 8888)]
-    public void Wrapper_GivenDeviceString_ReturnsCorrectDataUnitsWritten(string device, int data1, int data2, int expected)
-    {
-        Cmd.Setup(cmd => cmd.ExecAsSudo(It.Is<string>(str => str.Contains("/device1")))).Returns(GetJson(dataUnitsWritten: data1));
-        Cmd.Setup(cmd => cmd.ExecAsSudo(It.Is<string>(str => str.Contains("/device2")))).Returns(GetJson(dataUnitsWritten: data2));
-
-        var result = Sut.GetDeviceStats(Args(device));
-
-        Assert.Equal((ulong)expected, result.DataUnitsWritten);
-    }
-
-    private DeviceStatsArgs Args(string device = "/device")
-    {
-        return new DeviceStatsArgs(device);
+        Cmd.Verify(cmd => cmd.ExecAsSudo(It.Is<string>(str => str.Contains("/dev/nvme0"))), Times.Once());
     }
 
     private string GetJson(int dataUnitsRead = 0, int dataUnitsWritten = 0, int mediaErrors = 0, int errorLogs = 0)

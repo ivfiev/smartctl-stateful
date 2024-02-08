@@ -6,19 +6,24 @@ namespace Smartctl.Core.SmartMonTools;
 
 public class SmartMonToolsWrapper(ICommandExecutor exec) : IDeviceStatsProvider
 {
-    public DeviceStats GetDeviceStats(DeviceStatsArgs args)
+    public DeviceStats GetDeviceStats(string deviceId)
     {
-        var json = exec.ExecAsSudo(GetCommandString(args));
+        var json = exec.ExecAsSudo(GetCommandString(deviceId));
         var obj = JsonSerializer.Deserialize<SmartMonToolsRawResult>(json);
         return new DeviceStats(
-            obj.Log.DataUnitsRead,
-            obj.Log.DataUnitsWritten,
+            GetTb(obj.Log.DataUnitsRead),
+            GetTb(obj.Log.DataUnitsWritten),
             obj.Log.ErrorLogs + obj.Log.MediaErrors);
     }
 
-    private static string GetCommandString(DeviceStatsArgs args)
+    private static string GetCommandString(string deviceId)
     {
-        return $"smartctl -A {args.DeviceId} -j";
+        return $"smartctl -A {deviceId} -j";
+    }
+
+    private double GetTb(ulong units)
+    {
+        return Math.Round((double)units / 1_000_000_000 * 512, 2);
     }
 
     private class SmartMonToolsRawResult
@@ -36,9 +41,9 @@ public class SmartMonToolsWrapper(ICommandExecutor exec) : IDeviceStatsProvider
         public required ulong DataUnitsWritten { get; set; }
 
         [JsonPropertyName("media_errors")]
-        public required uint MediaErrors { get; set; }
+        public required int MediaErrors { get; set; }
 
         [JsonPropertyName("num_err_log_entries")]
-        public required uint ErrorLogs { get; set; }
+        public required int ErrorLogs { get; set; }
     }
 }

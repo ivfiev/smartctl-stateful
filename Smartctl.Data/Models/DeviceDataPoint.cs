@@ -5,13 +5,13 @@ namespace Smartctl.Data.Models;
 [PrimaryKey(nameof(Date), nameof(Device))]
 public class DeviceDataPoint
 {
-    public DateTime Date { get; set; }
+    public DateOnly Date { get; set; }
 
     public string Device { get; set; }
 
-    public ulong DataUnitsRead { get; set; }
+    public double ReadTb { get; set; }
 
-    public ulong DataUnitsWritten { get; set; }
+    public double WrittenTb { get; set; }
 
-    public uint TotalErrors { get; set; }
+    public int Errors { get; set; }
 }

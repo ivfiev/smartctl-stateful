@@ -1,5 +1,3 @@
 namespace Smartctl.Core.Contracts;
 
-public record DeviceStats(ulong DataUnitsRead, ulong DataUnitsWritten, uint TotalErrors);
-
-public record DeviceStatsArgs(string DeviceId);
+public record DeviceStats(double ReadTb, double WrittenTb, int Errors);
