@@ -4,21 +4,24 @@ using Smartctl.Core.Contracts;
 
 namespace Smartctl.Core.SmartMonTools;
 
-public class SmartMonToolsWrapper(ICommandExecutor exec) : IDiskStatsProvider
+public class SmartMonToolsWrapper(ICommandExecutor exec) : IDeviceStatsProvider
 {
-    public DiskStats GetDiskStats(DiskStatsArgs args)
+    public DeviceStats GetDeviceStats(DeviceStatsArgs args)
     {
         var json = exec.ExecAsSudo(GetCommandString(args));
-        var obj = JsonSerializer.Deserialize<SmartResult>(json);
-        return new DiskStats(obj.Log.DataUnitsWritten, json);
+        var obj = JsonSerializer.Deserialize<SmartMonToolsRawResult>(json);
+        return new DeviceStats(
+            obj.Log.DataUnitsRead,
+            obj.Log.DataUnitsWritten,
+            obj.Log.ErrorLogs + obj.Log.MediaErrors);
     }
 
-    private static string GetCommandString(DiskStatsArgs args)
+    private static string GetCommandString(DeviceStatsArgs args)
     {
-        return $"smartctl -A {args.Device} -j";
+        return $"smartctl -A {args.DeviceId} -j";
     }
 
-    private class SmartResult
+    private class SmartMonToolsRawResult
     {
         [JsonPropertyName("nvme_smart_health_information_log")]
         public required NvmeSmartInfoLog Log { get; set; }
@@ -26,7 +29,16 @@ public class SmartMonToolsWrapper(ICommandExecutor exec) : IDiskStatsProvider
 
     private class NvmeSmartInfoLog
     {
+        [JsonPropertyName("data_units_read")]
+        public required ulong DataUnitsRead { get; set; }
+
         [JsonPropertyName("data_units_written")]
-        public required uint DataUnitsWritten { get; set; }
+        public required ulong DataUnitsWritten { get; set; }
+
+        [JsonPropertyName("media_errors")]
+        public required uint MediaErrors { get; set; }
+
+        [JsonPropertyName("num_err_log_entries")]
+        public required uint ErrorLogs { get; set; }
     }
 }

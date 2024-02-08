@@ -5,7 +5,7 @@ namespace Smartctl.Data;
 
 public class SmartctlContext : DbContext
 {
-    public DbSet<DiskDataPoint> DiskDataPoints { get; set; }
+    public DbSet<DeviceDataPoint> DeviceDataPoints { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {

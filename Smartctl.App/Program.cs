@@ -1,5 +1,4 @@
 ﻿using Smartctl.Data;
-using Smartctl.Data.Models;
 
 // var res = new SmartMonToolsWrapper(new CommandExecutor()).GetDiskStats(new DiskStatsArgs("/dev/nvme0"));
 //
@@ -7,13 +6,14 @@ using Smartctl.Data.Models;
 
 using var db = new SmartctlContext();
 
+//db.Database.Migrate();
 db.Database.EnsureCreated();
 
-db.DiskDataPoints.Add(new DiskDataPoint
-{
-    Device = "dev",
-    Date = DateTime.Now,
-    RawJson = ""
-});
+// db.DiskDataPoints.Add(new DiskDataPoint
+// {
+//     Device = "dev",
+//     Date = DateTime.Now,
+//     RawJson = ""
+// });
 
-db.SaveChanges();
+//db.SaveChanges();
