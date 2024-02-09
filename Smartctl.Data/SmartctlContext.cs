@@ -9,7 +9,7 @@ public class SmartctlContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
-        if (Environment.GetEnvironmentVariable("SMARTCTL_INMEMORY") == "1")
+        if (Environment.GetEnvironmentVariable("SMARTCTL_SQLITE_INMEMORY") == "1")
         {
             options.UseSqlite("DataSource=:memory:?cache=shared");
         }

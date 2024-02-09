@@ -98,7 +98,7 @@ public class SmartctlServiceTests
         var result = Sut.GetPeriodDeviceStats("/device1");
 
         Assert.Single(result.WrittenTbPerPeriod);
-        Assert.Equal(0.333, result.WrittenTbPerPeriod[30]);
+        Assert.Equal(1.0 / 3.0, result.WrittenTbPerPeriod[30]);
     }
 
     [Fact]
@@ -115,9 +115,9 @@ public class SmartctlServiceTests
         var result = Sut.GetPeriodDeviceStats("/device1");
 
         Assert.Equal(3, result.WrittenTbPerPeriod.Count);
-        Assert.Equal(8.571, result.WrittenTbPerPeriod[35]);
-        Assert.Equal(14.286, result.WrittenTbPerPeriod[7]);
-        Assert.Equal(8.333, result.WrittenTbPerPeriod[6]);
+        Assert.Equal(300.0 / 35.0, result.WrittenTbPerPeriod[35]);
+        Assert.Equal(100.0 / 7.0, result.WrittenTbPerPeriod[7]);
+        Assert.Equal(50.0 / 6.0, result.WrittenTbPerPeriod[6]);
         Assert.Equal(21, result.ReadTb);
         Assert.Equal(400, result.WrittenTb);
         Assert.Equal(1, result.Errors);
@@ -148,7 +148,7 @@ public class SmartctlServiceTests
 
     private SmartctlContext GetDb()
     {
-        Environment.SetEnvironmentVariable("SQLITE_INMEMORY", "1");
+        Environment.SetEnvironmentVariable("SMARTCTL_SQLITE_INMEMORY", "1");
         Db = new SmartctlContext();
         Db.Database.EnsureCreated();
         Db.DeviceDataPoints.RemoveRange(Db.DeviceDataPoints);

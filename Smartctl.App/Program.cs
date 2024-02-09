@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Smartctl.App.Commands;
 using Smartctl.Core;
 using Smartctl.Core.Contracts;
+using Smartctl.Core.Formatters;
 using Smartctl.Core.SmartMonTools;
 using Smartctl.Core.Terminal;
 using Smartctl.Data;
@@ -14,6 +15,7 @@ builder.Services.AddDbContext<SmartctlContext>();
 builder.Services.AddSingleton<ICommandExecutor, CommandExecutor>();
 builder.Services.AddSingleton<IDeviceStatsProvider, SmartMonToolsWrapper>();
 builder.Services.AddSingleton<SmartctlService>();
+builder.Services.AddSingleton<IStatsFormatter, PlainTextFormatter>();
 
 var app = builder.Build();
 

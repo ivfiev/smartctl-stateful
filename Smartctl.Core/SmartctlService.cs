@@ -60,7 +60,7 @@ public class SmartctlService(SmartctlContext db, IDeviceStatsProvider provider)
         if (then is not null)
         {
             var days = today.Date.DayNumber - then.Date.DayNumber;
-            periods[days] = Math.Round((today.WrittenTb - then.WrittenTb) / days, 3);
+            periods[days] = (today.WrittenTb - then.WrittenTb) / days;
         }
     }
 
