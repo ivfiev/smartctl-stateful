@@ -1,19 +1,24 @@
-﻿using Smartctl.Data;
+﻿using Cocona;
+using Microsoft.Extensions.DependencyInjection;
+using Smartctl.App.Commands;
+using Smartctl.Core;
+using Smartctl.Core.Contracts;
+using Smartctl.Core.SmartMonTools;
+using Smartctl.Core.Terminal;
+using Smartctl.Data;
 
-// var res = new SmartMonToolsWrapper(new CommandExecutor()).GetDiskStats(new DiskStatsArgs("/dev/nvme0"));
-//
-// Console.WriteLine(res);
+var builder = CoconaApp.CreateBuilder();
 
-using var db = new SmartctlContext();
+builder.Services.AddDbContext<SmartctlContext>();
 
-//db.Database.Migrate();
-db.Database.EnsureCreated();
+builder.Services.AddSingleton<ICommandExecutor, CommandExecutor>();
+builder.Services.AddSingleton<IDeviceStatsProvider, SmartMonToolsWrapper>();
+builder.Services.AddSingleton<SmartctlService>();
 
-// db.DiskDataPoints.Add(new DiskDataPoint
-// {
-//     Device = "dev",
-//     Date = DateTime.Now,
-//     RawJson = ""
-// });
+var app = builder.Build();
 
-//db.SaveChanges();
+app.Services.GetRequiredService<SmartctlContext>().Database.EnsureCreated();
+
+app.AddCommands<SmartctlCommand>();
+
+app.Run();
