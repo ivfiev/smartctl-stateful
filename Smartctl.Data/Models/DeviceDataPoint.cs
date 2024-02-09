@@ -12,6 +12,4 @@ public class DeviceDataPoint
     public double ReadTb { get; set; }
 
     public double WrittenTb { get; set; }
-
-    public int Errors { get; set; }
 }

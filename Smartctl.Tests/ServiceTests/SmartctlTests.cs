@@ -53,7 +53,7 @@ public class SmartctlServiceTests
     [Fact]
     public void Smartctl_HavingTodaysData_ReplacesTheDataPoint()
     {
-        PopulateDb((0, 19, 9, 0));
+        PopulateDb((0, 19, 9));
         ConfigureProvider(20, 10, 1);
 
         var result = Sut.GetPeriodDeviceStats("/device1");
@@ -61,7 +61,6 @@ public class SmartctlServiceTests
 
         Assert.Equal(20, model.ReadTb);
         Assert.Equal(10, model.WrittenTb);
-        Assert.Equal(1, model.Errors);
         Assert.Equal(20, result.ReadTb);
         Assert.Equal(10, result.WrittenTb);
         Assert.Equal(1, result.Errors);
@@ -70,7 +69,7 @@ public class SmartctlServiceTests
     [Fact]
     public void Smartctl_HavingYesterdaysData_Calculates1dayDelta()
     {
-        PopulateDb((1, 19, 9, 0));
+        PopulateDb((1, 19, 9));
         ConfigureProvider(21, 10, 1);
 
         var result = Sut.GetPeriodDeviceStats("/device1");
@@ -81,7 +80,7 @@ public class SmartctlServiceTests
     [Fact]
     public void Smartctl_Having2DaysAgoData_Calculates2dayDelta()
     {
-        PopulateDb((2, 19, 9, 0));
+        PopulateDb((2, 19, 9));
         ConfigureProvider(21, 10, 1);
 
         var result = Sut.GetPeriodDeviceStats("/device1");
@@ -92,7 +91,7 @@ public class SmartctlServiceTests
     [Fact]
     public void Smartctl_Having30DaysAgoData_Calculates30dayDelta()
     {
-        PopulateDb((30, 19, 0, 0));
+        PopulateDb((30, 19, 0));
         ConfigureProvider(21, 10, 1);
 
         var result = Sut.GetPeriodDeviceStats("/device1");
@@ -104,12 +103,12 @@ public class SmartctlServiceTests
     [Fact]
     public void Smartctl_HavingAVarietyOfData_CalculatesCorrectDeltas()
     {
-        PopulateDb((35, 19, 100, 0));
-        PopulateDb((29, 19, 150, 0));
-        PopulateDb((14, 19, 200, 0));
-        PopulateDb((8, 19, 250, 0));
-        PopulateDb((7, 19, 300, 0));
-        PopulateDb((6, 19, 350, 0));
+        PopulateDb((35, 19, 100));
+        PopulateDb((29, 19, 150));
+        PopulateDb((14, 19, 200));
+        PopulateDb((8, 19, 250));
+        PopulateDb((7, 19, 300));
+        PopulateDb((6, 19, 350));
         ConfigureProvider(21, 400, 1);
 
         var result = Sut.GetPeriodDeviceStats("/device1");
@@ -130,17 +129,16 @@ public class SmartctlServiceTests
             .Returns(new DeviceStats(read, write, err));
     }
 
-    private void PopulateDb(params (int, double, double, int)[] data)
+    private void PopulateDb(params (int, double, double)[] data)
     {
-        foreach (var (days, read, write, err) in data)
+        foreach (var (days, read, write) in data)
         {
             Db.DeviceDataPoints.Add(new DeviceDataPoint
             {
                 Date = DateOnly.FromDateTime(DateTime.Now.AddDays(-days)),
                 Device = "/device1",
                 ReadTb = read,
-                WrittenTb = write,
-                Errors = err
+                WrittenTb = write
             });
         }
         Db.SaveChanges();
@@ -150,9 +148,8 @@ public class SmartctlServiceTests
     {
         Environment.SetEnvironmentVariable("SMARTCTL_SQLITE_INMEMORY", "1");
         Db = new SmartctlContext();
+        Db.Database.EnsureDeleted();
         Db.Database.EnsureCreated();
-        Db.DeviceDataPoints.RemoveRange(Db.DeviceDataPoints);
-        Db.SaveChanges();
         return Db;
     }
 }

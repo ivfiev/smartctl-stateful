@@ -10,14 +10,13 @@ public class SmartctlService(SmartctlContext db, IDeviceStatsProvider provider)
 
     public PeriodDeviceStats GetPeriodDeviceStats(string deviceId)
     {
-        UpsertTodaysDataPoint(deviceId);
-        return CalcStats(deviceId);
+        var stats = provider.GetDeviceStats(deviceId);
+        UpsertTodaysDataPoint(deviceId, stats);
+        return CalcStats(deviceId, stats);
     }
 
-    private void UpsertTodaysDataPoint(string deviceId)
+    private void UpsertTodaysDataPoint(string deviceId, DeviceStats stats)
     {
-        var stats = provider.GetDeviceStats(deviceId);
-
         var today = db.DeviceDataPoints.FirstOrDefault(data => data.Date == _today);
 
         if (today is null)
@@ -29,13 +28,12 @@ public class SmartctlService(SmartctlContext db, IDeviceStatsProvider provider)
         {
             today.ReadTb = stats.ReadTb;
             today.WrittenTb = stats.WrittenTb;
-            today.Errors = stats.Errors;
         }
 
         db.SaveChanges();
     }
 
-    private PeriodDeviceStats CalcStats(string deviceId)
+    private PeriodDeviceStats CalcStats(string deviceId, DeviceStats stats)
     {
         var allStats = db.DeviceDataPoints
             .Where(data => data.Device == deviceId)
@@ -52,7 +50,7 @@ public class SmartctlService(SmartctlContext db, IDeviceStatsProvider provider)
         AddPeriodPoint(periods, today, week);
         AddPeriodPoint(periods, today, month);
 
-        return new PeriodDeviceStats(today.ReadTb, today.WrittenTb, periods, today.Errors);
+        return new PeriodDeviceStats(today.ReadTb, today.WrittenTb, periods, stats.Errors);
     }
 
     private void AddPeriodPoint(IDictionary<int, double> periods, DeviceDataPoint today, DeviceDataPoint? then)
@@ -71,8 +69,7 @@ public class SmartctlService(SmartctlContext db, IDeviceStatsProvider provider)
             Date = date,
             Device = deviceId,
             ReadTb = stats.ReadTb,
-            WrittenTb = stats.WrittenTb,
-            Errors = stats.Errors
+            WrittenTb = stats.WrittenTb
         };
     }
 }
