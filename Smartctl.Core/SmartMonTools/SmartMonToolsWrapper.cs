@@ -23,7 +23,7 @@ public class SmartMonToolsWrapper(ICommandExecutor exec) : IDeviceStatsProvider
 
     private double GetTb(ulong units)
     {
-        return Math.Round((double)units / 1_000_000_000 * 512, 2);
+        return Math.Round((double)units / 1_000_000_000 * 512, 3);
     }
 
     private class SmartMonToolsRawResult

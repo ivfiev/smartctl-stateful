@@ -22,8 +22,8 @@ public class SmartMonToolsTests
 
         var result = Sut.GetDeviceStats("/device");
 
-        Assert.Equal(1.02, result.ReadTb);
-        Assert.Equal(0.51, result.WrittenTb);
+        Assert.Equal(1.024, result.ReadTb);
+        Assert.Equal(0.512, result.WrittenTb);
         Assert.Equal(8, result.Errors);
     }
 
