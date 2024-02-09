@@ -1,4 +1,4 @@
-namespace Smartctl.Core.Formatters;
+namespace Smartctl.Core.Contracts;
 
 public interface IStatsFormatter
 {

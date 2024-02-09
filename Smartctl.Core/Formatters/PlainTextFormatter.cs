@@ -1,4 +1,5 @@
 using System.Text;
+using Smartctl.Core.Contracts;
 
 namespace Smartctl.Core.Formatters;
 

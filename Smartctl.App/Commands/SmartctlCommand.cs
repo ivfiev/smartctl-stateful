@@ -1,6 +1,6 @@
 using Cocona;
 using Smartctl.Core;
-using Smartctl.Core.Formatters;
+using Smartctl.Core.Contracts;
 
 namespace Smartctl.App.Commands;
 

@@ -1,4 +1,4 @@
-using Smartctl.Core;
+using Smartctl.Core.Contracts;
 using Smartctl.Core.Formatters;
 
 namespace Smartctl.Tests.Formatters;

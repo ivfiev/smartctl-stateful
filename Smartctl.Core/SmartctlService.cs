@@ -73,5 +73,3 @@ public class SmartctlService(SmartctlContext db, IDeviceStatsProvider provider)
         };
     }
 }
-
-public record PeriodDeviceStats(double ReadTb, double WrittenTb, IDictionary<int, double> WrittenTbPerPeriod, int Errors);
