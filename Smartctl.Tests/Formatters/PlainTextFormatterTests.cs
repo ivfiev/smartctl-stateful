@@ -20,13 +20,13 @@ public class FormatterTests
         var result = sut.Format(Stats, 3);
 
         Assert.Equal("""
-                     =========== SMART/Health Information ===========
-                     Total read:                             2.123 TB
-                     Total written:                          1.235 TB
-                     Total errors:                           1
-                     Average written over the past 1 days:   0.346 TB
-                     Average written over the past 7 days:   0.789 TB
-                     Average written over the past 30 days:  0.800 TB
+                     === SMART/Health Information ===
+                     Reads:              2.123 TB
+                     Writes:             1.235 TB
+                     Errors:             1
+                     Writes (1 days):    0.346 TB
+                     Writes (7 days):    0.789 TB
+                     Writes (30 days):   0.800 TB
 
                      """, result);
     }

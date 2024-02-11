@@ -9,21 +9,21 @@ public class PlainTextFormatter : IStatsFormatter
     {
         var sb = new StringBuilder();
 
-        sb.Append("=========== SMART/Health Information ===========\n");
-        sb.Append($"{Pad("Total read:")}{Round(stats.ReadTb)} TB\n");
-        sb.Append($"{Pad("Total written:")}{Round(stats.WrittenTb)} TB\n");
-        sb.Append($"{Pad("Total errors:")}{stats.Errors}\n");
+        sb.Append("=== SMART/Health Information ===\n");
+        sb.Append($"{Pad("Reads:")}{Round(stats.ReadTb)} TB\n");
+        sb.Append($"{Pad("Writes:")}{Round(stats.WrittenTb)} TB\n");
+        sb.Append($"{Pad("Errors:")}{stats.Errors}\n");
 
         foreach (var (days, avg) in stats.WrittenTbPerPeriod)
         {
-            sb.Append($"{Pad($"Average written over the past {days} days:")}{Round(avg)} TB\n");
+            sb.Append($"{Pad($"Writes ({days} days):")}{Round(avg)} TB\n");
         }
 
         return sb.ToString();
 
         string Pad(string str)
         {
-            return str.PadRight(40);
+            return str.PadRight(20);
         }
 
         string Round(double d)
