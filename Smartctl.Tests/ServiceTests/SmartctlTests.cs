@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Moq;
 using Smartctl.Core;
 using Smartctl.Core.Contracts;
@@ -148,7 +149,7 @@ public class SmartctlServiceTests
     {
         Environment.SetEnvironmentVariable("SMARTCTL_SQLITE_INMEMORY", "1");
         Db = new SmartctlContext();
-        Db.Database.EnsureDeleted();
+        Db.Database.OpenConnection();
         Db.Database.EnsureCreated();
         return Db;
     }

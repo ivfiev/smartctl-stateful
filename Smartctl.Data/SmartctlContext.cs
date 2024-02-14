@@ -11,12 +11,12 @@ public class SmartctlContext : DbContext
     {
         if (Environment.GetEnvironmentVariable("SMARTCTL_SQLITE_INMEMORY") == "1")
         {
-            options.UseSqlite("DataSource=:memory:?cache=shared");
+            options.UseSqlite("DataSource=:memory:");
         }
         else
         {
             var home = Environment.GetEnvironmentVariable("HOME");
-            options.UseSqlite($"Data Source={home}/.smartctl-stateful/data.db");
+            options.UseSqlite($"DataSource={Path.Combine(home, ".smartctl-stateful", "data.db")}");
         }
     }
 }
