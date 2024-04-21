@@ -18,7 +18,7 @@ public class SmartMonToolsTests
     [Fact]
     public void Wrapper_ParsesJsonDataCorrectly()
     {
-        Cmd.Setup(cmd => cmd.ExecAsSudo(It.IsAny<string>())).Returns(GetJson(2000000, 1000000, 3, 5));
+        Cmd.Setup(cmd => cmd.SudoExec(It.IsAny<string>())).Returns(GetJson(2000000, 1000000, 3, 5));
 
         var result = Sut.GetDeviceStats("/device");
 
@@ -30,11 +30,11 @@ public class SmartMonToolsTests
     [Fact]
     public void Wrapper_RequestsCorrectDeviceId()
     {
-        Cmd.Setup(cmd => cmd.ExecAsSudo(It.IsAny<string>())).Returns(GetJson());
+        Cmd.Setup(cmd => cmd.SudoExec(It.IsAny<string>())).Returns(GetJson());
 
         Sut.GetDeviceStats("/dev/nvme0");
 
-        Cmd.Verify(cmd => cmd.ExecAsSudo(It.Is<string>(str => str.Contains("/dev/nvme0"))), Times.Once());
+        Cmd.Verify(cmd => cmd.SudoExec(It.Is<string>(str => str.Contains("/dev/nvme0"))), Times.Once());
     }
 
     private string GetJson(int dataUnitsRead = 0, int dataUnitsWritten = 0, int mediaErrors = 0, int errorLogs = 0)

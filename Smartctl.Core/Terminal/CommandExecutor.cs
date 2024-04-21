@@ -5,16 +5,38 @@ namespace Smartctl.Core.Terminal;
 
 public class CommandExecutor : ICommandExecutor
 {
-    public string ExecAsSudo(string command)
+    public string Exec(string command)
     {
-        var process = new Process
+        using var process = new Process();
+
+        var words = command.Split(' ');
+        var fileName = words[0];
+        var args = string.Join(" ", words[1..]);
+
+        process.StartInfo = new()
         {
-            StartInfo = new()
-            {
-                FileName = "pkexec",
-                Arguments = command,
-                RedirectStandardOutput = true
-            }
+            FileName = fileName,
+            Arguments = args,
+            RedirectStandardOutput = true
+        };
+
+        process.Start();
+        process.WaitForExit();
+
+        var result = process.StandardOutput.ReadToEnd();
+
+        return result;
+    }
+
+    public string SudoExec(string command)
+    {
+        using var process = new Process();
+
+        process.StartInfo = new()
+        {
+            FileName = "pkexec",
+            Arguments = command,
+            RedirectStandardOutput = true
         };
 
         process.Start();

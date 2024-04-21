@@ -8,7 +8,7 @@ public class SmartMonToolsWrapper(ICommandExecutor exec) : IDeviceStatsProvider
 {
     public DeviceStats GetDeviceStats(string deviceId)
     {
-        var json = exec.ExecAsSudo(GetCommandString(deviceId));
+        var json = exec.SudoExec(GetCommandString(deviceId));
         var obj = JsonSerializer.Deserialize<SmartMonToolsRawResult>(json);
         return new DeviceStats(
             GetTb(obj.Log.DataUnitsRead),

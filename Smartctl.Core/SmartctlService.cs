@@ -17,17 +17,17 @@ public class SmartctlService(SmartctlContext db, IDeviceStatsProvider provider)
 
     private void UpsertTodaysDataPoint(string deviceId, DeviceStats stats)
     {
-        var today = db.DeviceDataPoints.FirstOrDefault(data => data.Date == _today);
+        var todaysData = db.DeviceDataPoints.FirstOrDefault(data => data.Date == _today && data.Device == deviceId);
 
-        if (today is null)
+        if (todaysData is null)
         {
-            var model = GetModel(DateOnly.FromDateTime(DateTime.Now), deviceId, stats);
+            var model = GetModel(_today, deviceId, stats);
             db.DeviceDataPoints.Add(model);
         }
         else
         {
-            today.ReadTb = stats.ReadTb;
-            today.WrittenTb = stats.WrittenTb;
+            todaysData.ReadTb = stats.ReadTb;
+            todaysData.WrittenTb = stats.WrittenTb;
         }
 
         db.SaveChanges();

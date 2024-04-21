@@ -31,6 +31,18 @@ public class SmartctlServiceTests
     }
 
     [Fact]
+    public void Smartctl_WhenCalled_AddsSingleDataPointForEachDevice()
+    {
+        ConfigureProvider(device: "device1");
+        ConfigureProvider(device: "device2");
+
+        Sut.GetPeriodDeviceStats("/device1");
+        Sut.GetPeriodDeviceStats("/device2");
+
+        Assert.Equal(2, Db.DeviceDataPoints.Count());
+    }
+
+    [Fact]
     public void Smartctl_WhenErrorHappens_RethrowsAndDoesNotAddAnyDataPoints()
     {
         Provider.Setup(p => p.GetDeviceStats(It.IsAny<string>())).Throws(new Exception());
