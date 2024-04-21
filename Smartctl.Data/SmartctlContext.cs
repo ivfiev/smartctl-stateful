@@ -7,6 +7,8 @@ public class SmartctlContext : DbContext
 {
     public DbSet<DeviceDataPoint> DeviceDataPoints { get; set; }
 
+    public DbSet<DirectoryDataPoint> DirectoryDataPoints { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
         if (Environment.GetEnvironmentVariable("SMARTCTL_SQLITE_INMEMORY") == "1")
