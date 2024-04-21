@@ -50,7 +50,7 @@ public class DuTests
 
     private void Setup(string dir, params (string, string)[] data)
     {
-        var raw = GetRawData(data);
+        var raw = GetRawData(dir, data);
         var files = data.Select(d => d.Item1).ToArray();
         var paths = files.Select(f => $"{dir}/{f}");
         Cmd
@@ -61,13 +61,13 @@ public class DuTests
             .Returns(raw);
     }
 
-    private string GetRawData(params (string, string)[] data)
+    private string GetRawData(string dir, params (string, string)[] data)
     {
         var sb = new StringBuilder();
 
         foreach (var (file, size) in data)
         {
-            sb.Append($"\r{size} \t {file} \n");
+            sb.Append($"\r{size} \t {dir}/{file} \n");
         }
 
         return sb.ToString();

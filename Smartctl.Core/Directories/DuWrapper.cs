@@ -10,7 +10,7 @@ public class DuWrapper(ICommandExecutor cmd) : IDirectoryStatsProvider
         var du = GetCommand(directory);
         var output = cmd.Exec(du);
         var lines = output.Split('\n', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
-        var stats = lines.Select(line => Parse(directory, line)).ToArray();
+        var stats = lines.Select(Parse).ToArray();
         return stats;
     }
 
@@ -22,10 +22,10 @@ public class DuWrapper(ICommandExecutor cmd) : IDirectoryStatsProvider
         return command;
     }
 
-    private DirectoryStats Parse(string dir, string line)
+    private DirectoryStats Parse(string line)
     {
         var pair = line.Split((char[])null!, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
-        var path = $"{dir}/{pair[1]}";
+        var path = pair[1];
 
         var size = pair[0].Last() switch
         {
