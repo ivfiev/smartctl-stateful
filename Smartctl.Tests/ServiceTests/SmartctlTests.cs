@@ -1,13 +1,11 @@
-using Microsoft.EntityFrameworkCore;
 using Moq;
 using Smartctl.Core;
 using Smartctl.Core.Contracts;
-using Smartctl.Data;
 using Smartctl.Data.Models;
 
 namespace Smartctl.Tests.ServiceTests;
 
-public class SmartctlServiceTests
+public class SmartctlServiceTests : BaseTest
 {
     public SmartctlServiceTests()
     {
@@ -16,7 +14,6 @@ public class SmartctlServiceTests
         Sut = new SmartctlService(Db, Provider.Object);
     }
 
-    private SmartctlContext Db { get; set; }
     private SmartctlService Sut { get; set; }
     private Mock<IDeviceStatsProvider> Provider { get; set; }
 
@@ -155,14 +152,5 @@ public class SmartctlServiceTests
             });
         }
         Db.SaveChanges();
-    }
-
-    private SmartctlContext GetDb()
-    {
-        Environment.SetEnvironmentVariable("SMARTCTL_SQLITE_INMEMORY", "1");
-        Db = new SmartctlContext();
-        Db.Database.OpenConnection();
-        Db.Database.EnsureCreated();
-        return Db;
     }
 }
