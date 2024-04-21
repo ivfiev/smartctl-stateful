@@ -3,7 +3,7 @@ using Smartctl.Core.Contracts;
 
 namespace Smartctl.Core.Formatters;
 
-public class PlainTextFormatter : IStatsFormatter
+public class PlainTextDeviceStatsFormatter : IDeviceStatsFormatter
 {
     public string Format(PeriodDeviceStats stats, int precision)
     {
