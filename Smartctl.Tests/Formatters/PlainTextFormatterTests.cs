@@ -36,15 +36,15 @@ public class FormatterTests
     {
         var sut = new PlainTextDirectoryDiffFormatter();
 
-        DirectoryStats[] stats = [new("/dir/X", 0.000005), new("/dir/Y", 3.2), new("/dir/Zhsch", -1.8873), new("/dir/U", 0)];
+        DirectoryStats[] stats = [new("/dir/X", 12), new("/dir/Y", 3200000), new("/dir/Zhsch", -1887004), new("/dir/U", 0)];
 
         var result = sut.Format(stats);
 
         Assert.Equal("""
                      ====== Directory diffs ======
-                     /dir/Y        +3.2 GB
-                     /dir/Zhsch    -1.8873 GB
-                     /dir/X        +0.000005 GB
+                     /dir/Y        +3,276.800 MB
+                     /dir/Zhsch    -1,932.292 MB
+                     /dir/X        +0.012 MB
 
                      """, result);
     }

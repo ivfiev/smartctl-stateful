@@ -8,14 +8,14 @@ public class PlainTextDirectoryDiffFormatter : IDirectoryDiffFormatter
     public string Format(DirectoryStats[] stats)
     {
         var sb = new StringBuilder();
-        var sorted = stats.Where(s => s.SizeGb != 0).OrderByDescending(s => Math.Abs(s.SizeGb)).ToArray();
+        var sorted = stats.Where(s => s.SizeKb != 0).OrderByDescending(s => Math.Abs(s.SizeKb)).ToArray();
         var padLen = stats.MaxBy(s => s.Path.Length)?.Path.Length + 4;
 
         sb.Append("====== Directory diffs ======\n");
 
-        foreach (var (path, sizeGb) in sorted)
+        foreach (var (path, sizeKb) in sorted)
         {
-            sb.Append($"{Pad(path)}{(sizeGb > 0 ? "+" : "")}{Round(sizeGb)} GB\n");
+            sb.Append($"{Pad(path)}{(sizeKb > 0 ? "+" : "")}{GetValue(sizeKb)} MB\n");
         }
 
         return sb.ToString();
@@ -25,9 +25,9 @@ public class PlainTextDirectoryDiffFormatter : IDirectoryDiffFormatter
             return str.PadRight(padLen ?? 0);
         }
 
-        string Round(double d)
+        string GetValue(long kb)
         {
-            return Math.Round(d, 6).ToString("0.########################");
+            return $"{kb / 1000.0 * 1.024:n3}";
         }
     }
 }

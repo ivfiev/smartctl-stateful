@@ -11,7 +11,7 @@ public class DiffService(SmartctlContext db, IDirectoryStatsProvider provider)
     public DirectoryStats[] GetDiff(string directory)
     {
         var stats = provider.GetStats(directory);
-        var todaysData = db.DirectoryDataPoints.Where(data => data.Date == _today).ToArray();
+        var todaysData = db.DirectoryDataPoints.Where(data => data.Date == _today).ToDictionary(data => data.Path);
 
         foreach (var s in stats)
         {
@@ -23,9 +23,9 @@ public class DiffService(SmartctlContext db, IDirectoryStatsProvider provider)
         return CalcDiff(directory, stats);
     }
 
-    private void UpsertTodaysDataPoint(DirectoryDataPoint[] todaysData, DirectoryStats stats)
+    private void UpsertTodaysDataPoint(IDictionary<string, DirectoryDataPoint> todaysData, DirectoryStats stats)
     {
-        var todaysPoint = todaysData.FirstOrDefault(data => data.Path == stats.Path);
+        var todaysPoint = todaysData.TryGetValue(stats.Path, out var value) ? value : null;
 
         if (todaysPoint is null)
         {
@@ -34,7 +34,7 @@ public class DiffService(SmartctlContext db, IDirectoryStatsProvider provider)
         }
         else
         {
-            todaysPoint.SizeGb = stats.SizeGb;
+            todaysPoint.SizeKb = stats.SizeKb;
         }
     }
 
@@ -44,7 +44,7 @@ public class DiffService(SmartctlContext db, IDirectoryStatsProvider provider)
         {
             Date = _today,
             Path = stats.Path,
-            SizeGb = stats.SizeGb
+            SizeKb = stats.SizeKb
         };
     }
 
@@ -61,27 +61,27 @@ public class DiffService(SmartctlContext db, IDirectoryStatsProvider provider)
         var lastDate = allDates.Max();
         var previous = db.DirectoryDataPoints
             .Where(data => data.Path.StartsWith(dir) && data.Date == lastDate)
-            .ToDictionary(data => data.Path, data => data.SizeGb);
+            .ToDictionary(data => data.Path, data => data.SizeKb);
 
         List<DirectoryStats> result = [];
 
-        foreach (var (path, sizeGb) in current)
+        foreach (var (path, sizeKb) in current)
         {
-            if (previous.TryGetValue(path, out var prevSizeGb))
+            if (previous.TryGetValue(path, out var prevSizeKb))
             {
-                result.Add(new(path, sizeGb - prevSizeGb));
+                result.Add(new(path, sizeKb - prevSizeKb));
             }
             else
             {
-                result.Add(new(path, sizeGb));
+                result.Add(new(path, sizeKb));
             }
         }
 
-        foreach (var (prevPath, prevSizeGb) in previous)
+        foreach (var (prevPath, prevSizeKb) in previous)
         {
             if (current.All(curr => curr.Path != prevPath))
             {
-                result.Add(new(prevPath, -prevSizeGb));
+                result.Add(new(prevPath, -prevSizeKb));
             }
         }
 

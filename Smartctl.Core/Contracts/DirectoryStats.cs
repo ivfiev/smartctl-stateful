@@ -1,3 +1,3 @@
 namespace Smartctl.Core.Contracts;
 
-public record DirectoryStats(string Path, double SizeGb);
+public record DirectoryStats(string Path, long SizeKb);

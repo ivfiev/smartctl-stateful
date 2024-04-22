@@ -9,5 +9,5 @@ public class DirectoryDataPoint
 
     public string Path { get; set; }
 
-    public double SizeGb { get; set; }
+    public long SizeKb { get; set; }
 }
